@@ -12,6 +12,10 @@ No more. It's time to do the obvious thing and start building out music composit
 
 Enter... the concept of smart music!
 
+![simple](Opera%20Snapshot_2024-12-17_194602_stackedit.io.png)
+![advanced](GfCRyY8WYAA9SK0.png)
+![project tree, advanced](GfCHiNiXwAAL9xq.png)
+
 By absorbing the rules of music notation, dropping them into a programming language that's easy for both humans and machines to read and understand, and adding logical structures and operators... we can cross compile sheet music into code, make the code do logical operations, based on criteria we set, including improv, and export it back out into sheet music. 
 
 Imagine a composition that knows if it's being played live or in the studio, that can shift genres on a dime, adjust for surprises, change the number of performers, that accounts for vocal synthesis, and can jam like a crazy person with you at 3am.
