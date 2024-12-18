@@ -1,5 +1,5 @@
 # Crunchy
-So what you're seeing here is the solution to a problem in hashtag#ai training.
+So what you're seeing here is the solution to a problem in ai training.
 First, let's explain the issue, and the ramifications of the solution.
 
 Problem Statement: You can't build an ai system that has a functional understanding of music theory and orchestration, because of the way music notation works. If you could, people would be doing it already. 
