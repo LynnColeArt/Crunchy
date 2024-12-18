@@ -1,0 +1,198 @@
+require('../config/constants');
+require('../patterns/melody');
+require('../patterns/rhythm');
+require('../patterns/drums');
+require('../patterns/fiddle');
+require('../patterns/vocals');
+require('../lyrics');
+
+// Basic verse structure definition
+export const VERSE_STRUCTURE = {
+    bars: 8,
+    chord_progression: PROGRESSIONS.verse,
+    base_intensity: INTENSITY.base,
+    
+    dynamics: {
+        start: 0.6,
+        build: linear(0.1),  // Linear intensity increase
+        peak: section_end
+    }
+};
+
+// First verse - establishes the story
+export const VERSE_1 = {
+    ...VERSE_STRUCTURE,
+    
+    instruments: {
+        // Vocal line with integrated lyrics and delivery
+        vocals: vocals.get_vocal_line('verse', lyrics.verse_1),
+
+        // Guitar patterns based on performance type
+        guitar: {
+            pattern: PERFORMANCE_TYPE === "acoustic" ?
+                rhythm.patterns.acoustic.verse :
+                rhythm.patterns.full_band.verse,
+            progression: PROGRESSIONS.verse,
+            intensity: follow('vocals.intensity')
+        },
+
+        // Additional instruments when we have enough performers
+        when(PERFORMER_COUNT > 2) ({
+            // Fiddle parts
+            fiddle: {
+                pattern: fiddle.patterns.folk.basic_runs,
+                enter_at: bar(3),  // Enters third bar
+                intensity: follow('vocals.intensity'),
+                variations: fiddle.TECHNIQUES.standard.double_stop
+            },
+
+            // Bass line
+            bass: {
+                pattern: PERFORMANCE_TYPE === "acoustic" ?
+                    patterns.rhythm.country_folk.basic :
+                    patterns.rhythm.metal_rhythms.basic,
+                follow: 'chord_progression',
+                style: PERFORMANCE_TYPE === "acoustic" ? 
+                    "walking" : "driving"
+            },
+
+            // Drum patterns
+            drums: {
+                pattern: drums.PATTERNS.basic_country,
+                fills: drums.FILLS.country.simple,
+                intensity: follow('section.intensity')
+            }
+        })
+    },
+
+    transitions: {
+        to_chorus: {
+            buildup: bars(1),
+            intensity: ramp(0.2),
+            drums: drums.FILLS.country.turnaround,
+            fiddle: when(active) (
+                pattern: fiddle.patterns.folk.fiddle_fills
+            )
+        }
+    }
+};
+
+// Second verse - story development
+export const VERSE_2 = {
+    ...VERSE_STRUCTURE,
+    
+    base_intensity: VERSE_1.base_intensity + 0.1,
+    
+    instruments: {
+        // Vocal line for second verse
+        vocals: vocals.get_vocal_line('verse', lyrics.verse_2),
+
+        // Guitar continues but intensifies
+        guitar: {
+            ...VERSE_1.instruments.guitar,
+            intensity: increase(0.1)
+        },
+
+        when(PERFORMER_COUNT > 2) ({
+            // Fiddle variation
+            fiddle: {
+                pattern: fiddle.patterns.folk.double_stops,
+                intensity: VERSE_1.intensity + 0.2,
+                variations: fiddle.TECHNIQUES.standard.tremolo
+            },
+
+            // Bass intensifies
+            bass: {
+                ...VERSE_1.instruments.bass,
+                intensity: increase(0.1)
+            },
+
+            // Drums may switch to more intense pattern
+            drums: {
+                pattern: intensity > 0.7 ?
+                    drums.PATTERNS.folk_metal :
+                    drums.PATTERNS.basic_country,
+                fills: drums.FILLS.country.turnaround,
+                intensity: follow('section.intensity')
+            }
+        })
+    },
+
+    transitions: {
+        to_chorus: {
+            ...VERSE_1.transitions.to_chorus,
+            intensity: ramp(0.3)  // More intense buildup
+        }
+    }
+};
+
+// Context-specific adaptations
+export const PERFORMANCE_ADAPTERS = {
+    acoustic: {
+        reduce_intensity: 0.1,
+        prefer_patterns: "folk",
+        dynamic_range: "intimate",
+        tempo_adjust: -5
+    },
+
+    live: {
+        boost_intensity: 0.2,
+        extend_fills: true,
+        dynamic_range: "wide",
+        tempo_adjust: +2
+    },
+
+    studio: {
+        dynamic_range: "balanced",
+        tempo_adjust: 0
+    }
+};
+
+// Generate complete verse based on context
+export const generate_verse = (verse_number, context) => {
+    const verse_base = verse_number === 1 ? VERSE_1 : VERSE_2;
+    const adapters = PERFORMANCE_ADAPTERS[PERFORMANCE_TYPE];
+    
+    return {
+        ...verse_base,
+        intensity: verse_base.base_intensity + 
+            (IS_LIVE ? adapters.boost_intensity : 0),
+        
+        tempo: BASE_TEMPO + adapters.tempo_adjust,
+        
+        instruments: Object.entries(verse_base.instruments)
+            .filter(([name, part]) => 
+                PERFORMER_COUNT >= CORE_INSTRUMENTS[name]?.min_players
+            )
+            .reduce((acc, [name, part]) => ({
+                ...acc,
+                [name]: adapt_to_context(part, context)
+            }), {}),
+            
+        dynamics: {
+            ...verse_base.dynamics,
+            range: adapters.dynamic_range
+        }
+    };
+};
+
+// Export verse generator with performance context
+export default {
+    structure: VERSE_STRUCTURE,
+    
+    verse_1: () => generate_verse(1, {
+        intensity: INTENSITY.base,
+        dynamic_range: PERFORMANCE_TYPE
+    }),
+    
+    verse_2: () => generate_verse(2, {
+        intensity: INTENSITY.base + 0.1,
+        dynamic_range: PERFORMANCE_TYPE
+    }),
+    
+    // Utility for other sections to reference verse patterns
+    get_verse_pattern: (instrument, intensity) => {
+        const verse = generate_verse(1, { intensity });
+        return verse.instruments[instrument];
+    }
+};

@@ -1,0 +1,33 @@
+// Inside our chorus definition, we'll enhance the vocals section:
+
+vocals: vocals.get_vocal_line('chorus', lyrics.chorus, {
+    harmonies: when(PERFORMER_COUNT > 2) ({
+        // Traditional folk harmony structure
+        main_harmony: {
+            interval: 3,           // Third above
+            timing: "immediate",   // Start with lead
+            intensity: 0.7,        // Slightly behind lead
+            parts: [
+                { voice: "alto", follows: "melody" },
+                { voice: "tenor", follows: "melody", interval: -4 }  // Sixth below
+            ]
+        },
+
+        // Call and response elements
+        responses: {
+            after: "queen of the barnyard",
+            pattern: "echo",       // Echo style response
+            lyrics: "(Queen of all!)",
+            harmony_style: "close",
+            duration: beats(2)
+        },
+
+        // Special treatment for "WHISKERS MADE OF STEEL"
+        power_lines: {
+            pattern: "reinforcement",
+            voices: ["alto", "tenor", "bass"],
+            style: "folk_power",
+            dynamics: crescendo(0.3)
+        }
+    })
+});
