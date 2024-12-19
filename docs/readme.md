@@ -10,4 +10,10 @@ And even the examples contradict each other. But they have all been tested for t
 
 System is proposals for how things do/should work within the design we're proposing.
 
+Current proposals of note:
+* [Basic Transpiler Spec](system/transpiler-spec.md)
+* [Proposed DNA (Digital Notation Archive) Specification](system/dna-specification.md)
+* [Error Handling Approach](system/error-handling-approach.md)
+
+
 Would love your feedback on any and all of it. 
