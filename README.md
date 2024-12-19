@@ -148,4 +148,4 @@ Crunchy is being developed with input from musicians, developers, and the open-s
 
 ---
 
-For more detailed information, see our [Documentation](docs/README.md).
+For more detailed information, see our [Documentation](docs/readme.md).
