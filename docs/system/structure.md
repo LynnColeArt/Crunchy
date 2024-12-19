@@ -1,4 +1,4 @@
-# Proposed Project Structure
+# Proposed Implementation
 
 ```crunchy/
 ├── cli/crunchy/           
