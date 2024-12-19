@@ -153,7 +153,7 @@ What's Out of Scope (For Now):
 - Document clearly
 - Stay precise
 
-## Notable Quotes
+## Notable Lynn Cole Quotes
 * "The biggest killer of software projects is these words, 'Wouldn't it be nice if...' followed by anything."
 * "It's how you change the world. Everybody expects you to be swinging sledgehammers around... We've decided to play with swords instead. It's much more precise."
 
