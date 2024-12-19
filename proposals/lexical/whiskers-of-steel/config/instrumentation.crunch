@@ -1,0 +1,71 @@
+require('./constants');
+
+// Base instrument requirements
+export const CORE_INSTRUMENTS = {
+    guitar: {
+        required: true,
+        settings: GUITAR_SETTINGS[PERFORMANCE_TYPE === "acoustic" ? "acoustic" : "electric"],
+        fallback: "acoustic"  // What to use if we can't meet ideal setup
+    },
+    
+    vocals: {
+        required: true,
+        range: VOCAL_RANGE,
+        style: VOCAL_STYLE,
+        fallback: "clean"
+    }
+};
+
+// Full band configuration
+export const FULL_BAND = {
+    guitar: CORE_INSTRUMENTS.guitar,
+    vocals: CORE_INSTRUMENTS.vocals,
+    
+    fiddle: {
+        required: false,
+        settings: FIDDLE_SETTINGS,
+        active: PERFORMER_COUNT >= 3
+    },
+    
+    bass: {
+        required: false,
+        tuning: "standard",
+        style: PERFORMANCE_TYPE === "acoustic" ? "upright" : "electric",
+        active: PERFORMER_COUNT >= 4
+    },
+    
+    drums: {
+        required: false,
+        kit: PERFORMANCE_TYPE === "acoustic" ? "brushes" : "full",
+        active: PERFORMER_COUNT >= 5
+    }
+};
+
+// Instrument routing and combinations
+export const INSTRUMENT_GROUPS = {
+    rhythm_section: ["guitar", "bass", "drums"],
+    melodic_group: ["vocals", "fiddle"],
+    harmony_capable: ["guitar", "fiddle", "vocals"]
+};
+
+// Performance-specific instrument behaviors
+export const INSTRUMENT_BEHAVIOR = {
+    acoustic: {
+        dynamics: "natural",
+        spacing: "intimate",
+        interaction: "reactive"
+    },
+    
+    full: {
+        dynamics: "controlled",
+        spacing: "stage",
+        interaction: "structured"
+    }
+};
+
+// Export the active configuration based on context
+export default {
+    instruments: PERFORMER_COUNT > 2 ? FULL_BAND : CORE_INSTRUMENTS,
+    behavior: INSTRUMENT_BEHAVIOR[PERFORMANCE_TYPE],
+    groups: INSTRUMENT_GROUPS
+};

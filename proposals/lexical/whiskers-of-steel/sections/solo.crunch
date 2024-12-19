@@ -1,0 +1,210 @@
+require('../config/constants');
+require('../patterns/melody');
+require('../patterns/rhythm');
+require('../patterns/drums');
+require('../patterns/fiddle');
+require('../patterns/vocals');
+require('./verse');
+require('./bridge');
+
+// Solo section structure with dynamic length
+export const SOLO_STRUCTURE = {
+    bars: IS_LIVE ? 16 : 8,         // Double length for live
+    chord_progression: PROGRESSIONS.verse,  // Based on verse progression
+    base_intensity: INTENSITY.base + 0.3,
+    
+    // Dynamic intensity curve
+    dynamics: {
+        start: 0.7,
+        build: exponential(0.15),
+        peak: before_end(4)          // Peak 4 bars before end
+    }
+};
+
+// Improvisation rules using regex patterns
+export const IMPROV_RULES = {
+    // Regex patterns for different solo styles
+    patterns: {
+        folk: /([Dm7]{2}[F7]{1,2}){2,4}/,          // Folk-style runs
+        metal: /([Dm7]{1,2}[A7]{1}[F7]{2}){2,3}/,  // Metal-style patterns
+        fusion: /([Dm7]{2}[A7]{1}[F7]{1}){3,4}/    // Fusion approach
+    },
+
+    // Scale patterns allowed
+    scales: {
+        folk: ["dorian", "natural_minor"],
+        metal: ["phrygian", "dorian"],
+        fusion: ["dorian", "phrygian_dominant"]
+    },
+
+    // Rhythmic constraints
+    rhythms: {
+        folk: /X.x.X.x.|X.x.X.x./,
+        metal: /X.XX.X.X|XX.X.XX./,
+        fusion: /X.x.X.XX|X.XX.x.X/
+    }
+};
+
+export const SOLO = {
+    ...SOLO_STRUCTURE,
+    
+    instruments: {
+        // Lead instrument selection based on performance type
+        lead: when(PERFORMANCE_TYPE === "acoustic") ({
+            instrument: "guitar",
+            pattern: IMPROV_RULES.patterns.folk,
+            scales: IMPROV_RULES.scales.folk,
+            rhythm: IMPROV_RULES.rhythms.folk,
+            technique: "fingerpicking"
+        }) otherwise ({
+            instrument: "fiddle",
+            pattern: IMPROV_RULES.patterns.fusion,
+            scales: IMPROV_RULES.scales.fusion,
+            rhythm: IMPROV_RULES.rhythms.fusion,
+            technique: "aggressive"
+        }),
+
+        // Backing instruments
+        guitar: {
+            pattern: PERFORMANCE_TYPE === "acoustic" ?
+                rhythm.patterns.acoustic.intense :
+                rhythm.patterns.metal_rhythms.power,
+            progression: PROGRESSIONS.verse,
+            when(is_not_lead) ({
+                role: "backing",
+                intensity: 0.7
+            })
+        },
+
+        when(PERFORMER_COUNT > 2) ({
+            bass: {
+                pattern: PERFORMANCE_TYPE === "acoustic" ?
+                    patterns.rhythm.country_folk.driving :
+                    patterns.rhythm.metal_rhythms.gallop,
+                follow: 'chord_progression',
+                intensity: 0.8
+            },
+
+            drums: {
+                pattern: PERFORMANCE_TYPE === "acoustic" ?
+                    drums.PATTERNS.driving :
+                    drums.PATTERNS.folk_metal,
+                fills: every(bars(4)),
+                intensity: follow('lead.intensity')
+            }
+        })
+    },
+
+    // Solo-specific improvisational constraints
+    improv: {
+        scale_patterns: IS_LIVE ? 
+            IMPROV_RULES.scales.fusion :
+            IMPROV_RULES.scales.folk,
+        
+        rhythmic_density: {
+            min: 2,    // Notes per beat minimum
+            max: IS_LIVE ? 6 : 4  // More complex live
+        },
+
+        peak_register: IS_LIVE ?
+            "high" : "middle",
+            
+        allowed_techniques: [
+            "slides", "hammer_ons", 
+            "double_stops", "trills",
+            when(IS_LIVE) (["harmonics", "tremolo"])
+        ]
+    },
+
+    transitions: {
+        from_bridge: {
+            buildup: bars(1),
+            intensity: ramp(-0.1),  // Slight dynamic drop
+            drums: drums.FILLS.metal.simple
+        },
+        
+        to_final_chorus: {
+            buildup: bars(2),
+            intensity: ramp(0.3),
+            drums: drums.FILLS.metal.intense,
+            // Build tension before final chorus
+            lead: {
+                register: "highest",
+                intensity: crescendo(0.4)
+            }
+        }
+    }
+};
+
+// Solo-specific performance adaptations
+export const SOLO_ADAPTERS = {
+    acoustic: {
+        reduce_intensity: 0.1,
+        technique: "folk_virtuoso",
+        improv_style: IMPROV_RULES.patterns.folk,
+        duration: bars(8)
+    },
+
+    live: {
+        boost_intensity: 0.2,
+        technique: "fusion_extreme",
+        improv_style: IMPROV_RULES.patterns.fusion,
+        duration: bars(16),
+        allow_extended: true
+    },
+
+    studio: {
+        technique: "controlled_fusion",
+        improv_style: IMPROV_RULES.patterns.metal,
+        duration: bars(8),
+        double_tracks: true
+    }
+};
+
+// Generate solo with context
+export const generate_solo = (context) => {
+    const adapters = SOLO_ADAPTERS[PERFORMANCE_TYPE];
+    
+    return {
+        ...SOLO,
+        duration: adapters.duration,
+        
+        intensity: SOLO.base_intensity + 
+            (IS_LIVE ? adapters.boost_intensity : 0),
+        
+        instruments: {
+            ...SOLO.instruments,
+            lead: {
+                ...SOLO.instruments.lead,
+                technique: adapters.technique,
+                improv_pattern: adapters.improv_style
+            }
+        },
+
+        // Live-specific extensions
+        when(IS_LIVE && adapters.allow_extended) ({
+            duration: follow_crowd_energy({
+                min: bars(16),
+                max: bars(24)
+            }),
+            
+            dynamics: crowd_responsive({
+                intensity_scale: 0.2,
+                peak_follow: true
+            })
+        })
+    };
+};
+
+export default {
+    structure: SOLO_STRUCTURE,
+    rules: IMPROV_RULES,
+    
+    get_solo: (context) => generate_solo(context),
+    
+    // Utility for other sections
+    get_solo_pattern: (instrument, intensity) => {
+        const solo = generate_solo({ intensity });
+        return solo.instruments[instrument];
+    }
+};

@@ -1,0 +1,194 @@
+require('../config/constants');
+require('../patterns/melody');
+require('../patterns/rhythm');
+require('../patterns/drums');
+require('../patterns/fiddle');
+require('../patterns/vocals');
+require('../lyrics');
+require('./verse');
+require('./chorus');
+
+export const BRIDGE_STRUCTURE = {
+    bars: 8,
+    chord_progression: PROGRESSIONS.bridge,
+    base_intensity: INTENSITY.max,  // Peak intensity here
+    
+    dynamics: {
+        start: 0.8,
+        build: exponential(0.2),    // Fastest build of any section
+        peak: before_end(2)         // Peak 2 bars before end
+    }
+};
+
+export const BRIDGE = {
+    ...BRIDGE_STRUCTURE,
+    
+    instruments: {
+        vocals: vocals.get_vocal_line('bridge', lyrics.bridge, {
+            // Dramatic shift in vocal approach
+            technique: PERFORMANCE_TYPE === "acoustic" ?
+                vocals.TECHNIQUES.clean.pure :
+                vocals.TECHNIQUES.metal.power,
+            intensity: INTENSITY.max,
+            harmonies: when(PERFORMER_COUNT > 3) ([
+                {interval: 5, intensity: 0.8},  // Power harmony
+                {interval: 3, intensity: 0.7}   // Filling harmony
+            ])
+        }),
+
+        guitar: {
+            pattern: PERFORMANCE_TYPE === "acoustic" ?
+                rhythm.patterns.acoustic.intense :
+                rhythm.patterns.metal_rhythms.power,
+            progression: PROGRESSIONS.bridge,
+            technique: "aggressive",
+            when(PERFORMANCE_TYPE !== "acoustic") ({
+                distortion: 0.8,
+                palm_mute: alternating([2,1,1,2])
+            })
+        },
+
+        when(PERFORMER_COUNT > 2) ({
+            fiddle: {
+                // This is where fiddle goes full metal
+                pattern: PERFORMANCE_TYPE === "acoustic" ?
+                    fiddle.patterns.folk.intense :
+                    fiddle.patterns.metal.power_runs,
+                technique: fiddle.TECHNIQUES.standard.tremolo,
+                register: "high",
+                intensity: INTENSITY.max,
+                // Celtic-metal fusion runs
+                variations: [
+                    fiddle.patterns.folk.double_stops,
+                    fiddle.patterns.metal.harmonic_fills
+                ].blend(0.5)
+            },
+
+            bass: {
+                pattern: PERFORMANCE_TYPE === "acoustic" ?
+                    patterns.rhythm.country_folk.driving :
+                    patterns.rhythm.metal_rhythms.gallop,
+                follow: 'chord_progression',
+                technique: "aggressive",
+                when(PERFORMANCE_TYPE !== "acoustic") ({
+                    distortion: 0.4
+                })
+            },
+
+            drums: {
+                pattern: PERFORMANCE_TYPE === "acoustic" ?
+                    drums.PATTERNS.driving :
+                    drums.PATTERNS.folk_metal,
+                fills: drums.FILLS.metal.intense,
+                cymbals: "heavy",
+                kicks: "double_time",
+                intensity: INTENSITY.max
+            }
+        })
+    },
+
+    transitions: {
+        from_chorus: {
+            buildup: bars(0.5),
+            intensity: ramp(0.2),
+            all_instruments: crescendo(0.2)
+        },
+        
+        to_final_chorus: {
+            release: bars(1),
+            intensity: sustain(INTENSITY.max),
+            drums: drums.FILLS.metal.intense,
+            // Special transition moment
+            custom: {
+                bar: 7,
+                beat: 3,
+                effect: "full_stop",
+                duration: beats(1)
+            }
+        }
+    },
+
+    // Special bridge-specific effect
+    climax: {
+        at: bars(6),
+        duration: bars(2),
+        instruments: {
+            all: crescendo(0.3),
+            drums: drums.FILLS.metal.intense,
+            fiddle: when(active) (
+                pattern: fiddle.patterns.metal.harmonic_fills
+            )
+        }
+    }
+};
+
+// Bridge-specific adaptations
+export const BRIDGE_ADAPTERS = {
+    acoustic: {
+        reduce_intensity: 0.2,
+        technique: "driving_folk",
+        dynamic_range: "wide",
+        tempo_adjust: 0
+    },
+
+    live: {
+        boost_intensity: 0.1,
+        technique: "full_metal",
+        dynamic_range: "maximum",
+        tempo_adjust: +5,
+        extend_climax: true
+    },
+
+    studio: {
+        technique: "controlled_power",
+        dynamic_range: "wide",
+        tempo_adjust: 0,
+        double_tracks: true
+    }
+};
+
+export const generate_bridge = (context) => {
+    const adapters = BRIDGE_ADAPTERS[PERFORMANCE_TYPE];
+    
+    return {
+        ...BRIDGE,
+        
+        intensity: BRIDGE.base_intensity + 
+            (IS_LIVE ? adapters.boost_intensity : 0),
+        
+        tempo: BASE_TEMPO + adapters.tempo_adjust,
+        
+        instruments: Object.entries(BRIDGE.instruments)
+            .filter(([name, part]) => 
+                PERFORMER_COUNT >= CORE_INSTRUMENTS[name]?.min_players
+            )
+            .reduce((acc, [name, part]) => ({
+                ...acc,
+                [name]: adapt_to_context(part, {
+                    ...context,
+                    technique: adapters.technique
+                })
+            }), {}),
+            
+        dynamics: {
+            ...BRIDGE.dynamics,
+            range: adapters.dynamic_range
+        },
+
+        climax: IS_LIVE && adapters.extend_climax ? {
+            ...BRIDGE.climax,
+            duration: bars(3)
+        } : BRIDGE.climax
+    };
+};
+
+export default {
+    structure: BRIDGE_STRUCTURE,
+    get_bridge: (context) => generate_bridge(context),
+    
+    // Utility for other sections
+    get_bridge_pattern: (instrument, intensity) => {
+        const bridge = generate_bridge({ intensity });
+        return bridge.instruments[instrument];
+    }
+};

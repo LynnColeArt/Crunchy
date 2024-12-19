@@ -1,0 +1,130 @@
+require('../config/constants');
+require('./melody');
+
+// Core rhythm patterns using regex-style notation
+export const BASE_PATTERNS = {
+    country_folk: {
+        basic: /X.x.X.x./,         // Basic folk rhythm
+        alt: /X..x.X.x/,           // Alternating emphasis
+        waltz: /X..X..X../         // Triple feel option
+    },
+
+    metal_rhythms: {
+        chug: /X.XX.X.X/,          // Metal chug pattern
+        gallop: /X.x.x.X.x.x/,     // Galloping rhythm
+        power: /XX.X.XX./          // Power chord rhythm
+    },
+
+    shared: {
+        build: /X...XX..X.../,     // Tension builder
+        resolve: /X.x.X...|X.../   // Resolution pattern
+    }
+};
+
+// Time-based variations
+export const TIME_MODS = {
+    standard: {
+        grid: 8,              // 8th note grid
+        swing: 0,             // No swing
+        push: 0               // No push
+    },
+
+    relaxed: {
+        grid: 8,
+        swing: 0.2,          // Slight swing
+        push: -0.05          // Slightly laid back
+    },
+
+    driving: {
+        grid: 16,            // 16th note grid
+        swing: 0,
+        push: 0.05          // Slightly ahead
+    }
+};
+
+// Context-specific pattern sets
+export const PATTERN_SETS = {
+    acoustic: {
+        verse: [
+            BASE_PATTERNS.country_folk.basic,
+            BASE_PATTERNS.country_folk.alt
+        ],
+        chorus: [
+            BASE_PATTERNS.shared.build,
+            BASE_PATTERNS.country_folk.basic
+        ],
+        timing: TIME_MODS.relaxed
+    },
+
+    full_band: {
+        verse: [
+            BASE_PATTERNS.metal_rhythms.chug,
+            BASE_PATTERNS.metal_rhythms.gallop
+        ],
+        chorus: [
+            BASE_PATTERNS.metal_rhythms.power,
+            BASE_PATTERNS.shared.build
+        ],
+        timing: TIME_MODS.driving
+    }
+};
+
+// Pattern combination rules
+export const RHYTHM_RULES = {
+    transition_allowed: (from, to) => {
+        // Define valid pattern transitions
+        const valid_transitions = {
+            [BASE_PATTERNS.country_folk.basic]: [
+                BASE_PATTERNS.country_folk.alt,
+                BASE_PATTERNS.shared.build
+            ],
+            [BASE_PATTERNS.metal_rhythms.chug]: [
+                BASE_PATTERNS.metal_rhythms.gallop,
+                BASE_PATTERNS.metal_rhythms.power
+            ]
+        };
+        return valid_transitions[from]?.includes(to) ?? false;
+    },
+
+    intensity_map: (intensity) => {
+        if (intensity < 0.4) return BASE_PATTERNS.country_folk.basic;
+        if (intensity < 0.7) return BASE_PATTERNS.metal_rhythms.chug;
+        return BASE_PATTERNS.metal_rhythms.power;
+    }
+};
+
+// Dynamic pattern generation based on melody
+export const RHYTHM_GENERATOR = {
+    match_to_melody: (melody_pattern) => {
+        const pattern_density = melody_pattern.filter(note => note).length;
+        const base = PERFORMANCE_TYPE === "acoustic" ?
+            BASE_PATTERNS.country_folk :
+            BASE_PATTERNS.metal_rhythms;
+            
+        return pattern_density > 4 ? base.gallop : base.basic;
+    },
+
+    with_intensity: (base_pattern, intensity) => {
+        const time_feel = intensity > 0.6 ? 
+            TIME_MODS.driving : 
+            TIME_MODS.relaxed;
+            
+        return {
+            pattern: base_pattern,
+            timing: time_feel,
+            emphasis: intensity
+        };
+    }
+};
+
+export default {
+    patterns: PATTERN_SETS[PERFORMANCE_TYPE],
+    rules: RHYTHM_RULES,
+    generator: RHYTHM_GENERATOR,
+    
+    // Helper for getting contextual rhythm
+    get_rhythm: (section, intensity) => {
+        const base = PATTERN_SETS[PERFORMANCE_TYPE][section];
+        return RHYTHM_GENERATOR.with_intensity(base[0], intensity);
+    }
+};

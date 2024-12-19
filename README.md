@@ -1,33 +1,151 @@
 # Crunchy
-So what you're seeing here is the solution to a problem in ai training.
-First, let's explain the issue, and the ramifications of the solution.
+## A Precision Music Notation Transpiler
 
-Problem Statement: You can't build an ai system that has a functional understanding of music theory and orchestration, because of the way music notation works. If you could, people would be doing it already. 
+> **Project Status**: Crunchy is currently in early design and implementation phases. We are actively developing the core architecture and welcome community input on the design. The project has not yet reached MVP status.
 
-The way we hack together music ai today is sloppy. Doing it from conversations, music artifacts (read copyright infringement), using diffusion processes. These solutions are stupid, and brutal, and it's like throwing a hammer at a window trying to solve the problem.
+Crunchy is an open-source music notation transpiler designed to provide reliable, accurate conversion between different musical notation formats. With a focus on maintaining musical fidelity and supporting multi-track compositions, Crunchy aims to serve as a robust foundation for music notation processing.
 
-What's the problem? The problem is music notation. Music notation is centuries old, hasn't had an upgrade, and was designed to be visual. But, truth be told, even humans have trouble understanding it. For a long time, it was the best we had.
+## Overview
 
-No more. It's time to do the obvious thing and start building out music compositions as code. This solves the problem of AI training for music, but more than that... it opens up a world of unexpected possibilities for music composition itself.
+Currently in development, Crunchy is being built to convert between various music notation formats while preserving all musical information. It will handle:
+- Multiple notation formats (MusicXML, MuseScore JSON, MIDI)
+- Multi-track compositions
+- Complex musical structures
+- Format-specific features
 
-Enter... the concept of smart music!
+```bash
+# Basic usage
+crunchy --input score.musicxml --output score.mid
 
-![simple](Opera%20Snapshot_2024-12-17_194602_stackedit.io.png)
-![advanced](GfCRyY8WYAA9SK0.png)
-![project tree, advanced](GfCHiNiXwAAL9xq.png)
+# Multi-file batch processing
+crunchy --input ./scores --output ./midi --recursive
+```
 
-By absorbing the rules of music notation, dropping them into a programming language that's easy for both humans and machines to read and understand, and adding logical structures and operators... we can cross compile sheet music into code, make the code do logical operations, based on criteria we set, including improv, and export it back out into sheet music. 
+## Key Features
 
-Imagine a composition that knows if it's being played live or in the studio, that can shift genres on a dime, adjust for surprises, change the number of performers, that accounts for vocal synthesis, and can jam like a crazy person with you at 3am.
+- **Format Support**
+  - MusicXML parsing and generation
+  - MuseScore JSON support
+  - MIDI file handling
+  - Extensible format system
 
-Y'know, what's funny about this is, is that you don't even need ai to do this.
-It's all procedural. And we can do it today.
+- **Multi-Track Support**
+  - Full multi-track preservation
+  - Track relationship handling
+  - Timing synchronization
+  - Track-specific properties
 
-We do need a new programming language to do it though.
-Good news is that programming languages aren't hard to write.
+- **Error Handling**
+  - Clear, musician-friendly error messages
+  - Precise error location reporting
+  - Helpful suggestions for resolution
+  - Detailed conversion logging
 
-I'm calling the system... Crunchy.
-A two way music to logic and back again cross compiler.
-It's going to be free and open source.
+## Building from Source
 
-Wrecklessly untested coding examples, and a prototype will be forthcoming.
+### Prerequisites
+- C++17 compatible compiler
+- CMake 3.15 or higher
+- RtMidi library
+- nlohmann/json for C++
+
+### Build Steps
+```bash
+mkdir build
+cd build
+cmake ..
+make
+```
+
+### Running Tests
+```bash
+cd build
+ctest
+```
+
+## Usage Examples
+
+### Basic Conversion
+```bash
+# Convert MusicXML to MIDI
+crunchy -i input.musicxml -o output.mid
+
+# Convert MuseScore JSON to MusicXML
+crunchy -i score.json -o score.musicxml
+```
+
+### Advanced Options
+```bash
+# Process directory with specific formats
+crunchy --input-dir ./scores --output-dir ./midi \
+        --input-format musicxml --output-format midi \
+        --recursive
+
+# Verbose conversion with detailed logging
+crunchy -i input.musicxml -o output.mid --verbose
+```
+
+## Contributing
+
+We welcome contributions! Whether you're a musician, developer, or both, your input is valuable. See our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Key Areas for Contribution
+- Format support expansion
+- Performance optimization
+- Test case development
+- Documentation improvements
+- Bug reports and fixes
+
+## Error Handling Examples
+
+Crunchy provides clear, musical context-aware error messages:
+
+```
+Track synchronization issue:
+- Piano part ends at measure 45
+- Violin part ends at measure 43
+- All parts must have the same length
+```
+
+```
+Invalid notation in measure 15, Cello part:
+- Found quarter note triplet spanning barline
+- Triplets must be contained within a single measure
+Suggestion: Split the triplet at the barline
+```
+
+## Architecture
+
+Crunchy uses a hybrid event-graph structure for internal representation, combining:
+- Event-based timing
+- Graph-like relationships
+- Flexible property system
+- Multi-track awareness
+
+This design ensures accurate conversion while maintaining musical integrity.
+
+## Project Status
+
+Crunchy is under active development. Current focus:
+- Core transpiler implementation
+- Format parser development
+- Test framework establishment
+- Error handling system
+
+## License
+
+GNU General Public License v3.0
+
+Crunchy is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+
+## Acknowledgments
+
+Crunchy is being developed with input from musicians, developers, and the open-source community. Special thanks to all contributors who help make this project possible.
+
+---
+
+For more detailed information, see our [Documentation](docs/README.md).
