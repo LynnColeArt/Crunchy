@@ -4,7 +4,9 @@ This section is for documentation.
 
 First principles is where we put self important ethical discussions
 
-Lexical is where things regarded to making a programming language go
+Lexical is where things regarded to making a programming language go. Right now, it's grammars layouts and syntax proposals.
+Every bit of this is subject to change until we figure out how the model and parser actually function. 
+And even the examples contradict each other. But they have all been tested for the core requirement of being trainable, which they are, even without the parser.
 
 System is proposals for how things do/should work within the design we're proposing.
 
