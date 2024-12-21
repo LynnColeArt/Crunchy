@@ -1,0 +1,142 @@
+{
+  "score": {
+    "metadata": {
+      "title": "Quantum Dissonance",
+      "tickResolution": 1920,
+      "initialTempo": 180,
+      "initialTimeSignature": {
+        "numerator": 7,
+        "denominator": 8
+      }
+    },
+    "structure": [
+      {
+        "section": "fractal_intro",
+        "startMeasure": 1,
+        "endMeasure": 16,
+        "description": "Hypercomplex rhythmic deconstruction"
+      },
+      {
+        "section": "polyrhythmic_verse",
+        "startMeasure": 17,
+        "endMeasure": 48,
+        "description": "Simultaneous conflicting metric structures"
+      },
+      {
+        "section": "chaotic_chorus",
+        "startMeasure": 49,
+        "endMeasure": 80,
+        "description": "Extreme timbral and rhythmic mutation"
+      },
+      {
+        "section": "algorithmic_breakdown",
+        "startMeasure": 81,
+        "endMeasure": 112,
+        "description": "Generative mathematical sound deconstruction"
+      }
+    ],
+    "parts": [
+      {
+        "name": "Quantum Lead Synth",
+        "type": "synth.lead",
+        "elements": [
+          {
+            "type": "pattern",
+            "notes": ["D4", "F#4", "A4", "C5", "E5", "G5", "B5", "D6"],
+            "timing": {
+              "measure": 17,
+              "parts": 0
+            },
+            "duration": {"parts": 3840},
+            "modifiers": [
+              {
+                "type": "synth.oscillator",
+                "waveform": "wavetable",
+                "detune": 0.7,
+                "voices": 5,
+                "harmonics": [1, 0.5, 0.25, 0.125]
+              }
+            ]
+          }
+        ],
+        "modifiers": [
+          {
+            "type": "effects.delay",
+            "time": 0.17,
+            "feedback": 0.67,
+            "pattern": "prime"
+          },
+          {
+            "type": "effects.reverb",
+            "size": 0.95,
+            "damping": 0.1,
+            "complexity": "fractal"
+          }
+        ]
+      },
+      {
+        "name": "Hyper Percussion",
+        "type": "drums",
+        "elements": [
+          {
+            "type": "pattern",
+            "elements": [
+              {
+                "instrument": "kick",
+                "timing": {"parts": 0},
+                "subdivisions": [0, 320, 640, 960, 1280]
+              },
+              {
+                "instrument": "snare",
+                "timing": {"parts": 960},
+                "randomVariation": 0.3
+              },
+              {
+                "instrument": "hihat",
+                "timing": {"parts": 480},
+                "accents": [0.5, 0.7, 0.3]
+              }
+            ],
+            "repeat": 32,
+            "metricModulation": {
+              "base": 7,
+              "target": 11
+            }
+          }
+        ],
+        "modifiers": [
+          {
+            "type": "dynamics.power",
+            "initial": 0.9,
+            "decay": 0.05,
+            "stochastic": true
+          }
+        ]
+      },
+      {
+        "name": "Algorithmic Bass",
+        "type": "synth.bass",
+        "elements": [
+          {
+            "type": "pattern",
+            "notes": ["D1", "A1", "E2", "B2", "F#3", "C#4"],
+            "timing": {"measure": 49, "parts": 0},
+            "duration": {"parts": 7680},
+            "generativeRules": {
+              "intervalLogic": "fibonacci",
+              "transformationRate": 0.6
+            },
+            "modifiers": [
+              {
+                "type": "synth.oscillator",
+                "waveform": "granular",
+                "subOsc": 0.5,
+                "spectralMapping": "chaotic"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
