@@ -1,0 +1,201 @@
+{
+  "score": {
+    "metadata": {
+      "title": "Digital Horizon: Expanded",
+      "tickResolution": 960,
+      "initialTempo": 128,
+      "initialTimeSignature": {
+        "numerator": 4,
+        "denominator": 4
+      }
+    },
+    "structure": [
+      {
+        "section": "intro",
+        "startMeasure": 1,
+        "endMeasure": 8,
+        "description": "Minimal atmospheric buildup"
+      },
+      {
+        "section": "verse1",
+        "startMeasure": 9,
+        "endMeasure": 24,
+        "description": "Layered melodic progression"
+      },
+      {
+        "section": "chorus1",
+        "startMeasure": 25,
+        "endMeasure": 40,
+        "description": "Full energy peak with complex layering"
+      },
+      {
+        "section": "verse2",
+        "startMeasure": 41,
+        "endMeasure": 56,
+        "description": "Deconstructed rhythm with harmonic variations"
+      },
+      {
+        "section": "chorus2",
+        "startMeasure": 57,
+        "endMeasure": 72,
+        "description": "Intensified harmonic and rhythmic climax"
+      },
+      {
+        "section": "breakdown",
+        "startMeasure": 73,
+        "endMeasure": 88,
+        "description": "Minimal atmospheric deconstruction"
+      },
+      {
+        "section": "finalChorus",
+        "startMeasure": 89,
+        "endMeasure": 104,
+        "description": "Maximal energy resolution"
+      }
+    ],
+    "parts": [
+      {
+        "name": "Lead Synth",
+        "type": "synth.lead",
+        "elements": [
+          {
+            "type": "pattern",
+            "notes": ["D4", "F4", "A4", "G4", "E4", "C4", "B3", "D4"],
+            "timing": {"measure": 9, "parts": 0},
+            "duration": {"parts": 1920},
+            "modifiers": [
+              {
+                "type": "synth.oscillator",
+                "waveform": "sawtooth",
+                "detune": 0.3,
+                "voices": 3
+              }
+            ]
+          },
+          {
+            "type": "pattern",
+            "notes": ["A4", "C5", "E5", "D5", "B4", "G4", "F4", "A4"],
+            "timing": {"measure": 41, "parts": 0},
+            "duration": {"parts": 1920},
+            "modifiers": [
+              {
+                "type": "synth.oscillator",
+                "waveform": "square",
+                "detune": 0.2,
+                "voices": 2
+              }
+            ]
+          }
+        ],
+        "modifiers": [
+          {
+            "type": "effects.delay",
+            "time": 0.35,
+            "feedback": 0.4
+          },
+          {
+            "type": "effects.reverb",
+            "size": 0.6,
+            "damping": 0.3
+          }
+        ]
+      },
+      {
+        "name": "Bass Synth",
+        "type": "synth.bass",
+        "elements": [
+          {
+            "type": "pattern",
+            "notes": ["D2", "F2", "A2", "G2", "B2", "D3"],
+            "timing": {"measure": 9, "parts": 0},
+            "duration": {"parts": 2880},
+            "modifiers": [
+              {
+                "type": "synth.oscillator",
+                "waveform": "square",
+                "subOsc": 0.4
+              }
+            ]
+          },
+          {
+            "type": "pattern",
+            "notes": ["A1", "C2", "E2", "D2", "F2", "A2"],
+            "timing": {"measure": 41, "parts": 0},
+            "duration": {"parts": 2880},
+            "modifiers": [
+              {
+                "type": "synth.oscillator",
+                "waveform": "triangle",
+                "subOsc": 0.3
+              }
+            ]
+          }
+        ],
+        "modifiers": [
+          {
+            "type": "effects.distortion",
+            "drive": 0.5,
+            "tone": 0.7
+          }
+        ]
+      },
+      {
+        "name": "Percussion",
+        "type": "drums",
+        "elements": [
+          {
+            "type": "pattern",
+            "elements": [
+              {
+                "instrument": "kick",
+                "timing": {"parts": 0}
+              },
+              {
+                "instrument": "snare",
+                "timing": {"parts": 960}
+              },
+              {
+                "instrument": "hihat",
+                "timing": {"parts": 480}
+              },
+              {
+                "instrument": "clap",
+                "timing": {"parts": 1440}
+              }
+            ],
+            "repeat": 16
+          },
+          {
+            "type": "pattern",
+            "elements": [
+              {
+                "instrument": "kick",
+                "timing": {"parts": 0}
+              },
+              {
+                "instrument": "snare",
+                "timing": {"parts": 480}
+              },
+              {
+                "instrument": "hihat",
+                "timing": {"parts": 240}
+              },
+              {
+                "instrument": "crash",
+                "timing": {"parts": 1920}
+              }
+            ],
+            "repeat": 8
+          }
+        ],
+        "modifiers": [
+          {
+            "type": "dynamics.power",
+            "initial": 0.8,
+            "decay": 0.3
+          }
+        ]
+      }
+    ]
+  }
+}
