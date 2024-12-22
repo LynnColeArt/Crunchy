@@ -1,0 +1,64 @@
+{
+  "name": "Fiddarmonica",
+  "type": "hybrid.wind.string",
+  "range": ["C2", "C6"],
+  "components": [
+    {
+      "name": "Harmonica",
+      "type": "wind",
+      "playstyle": {
+        "default": "blow-draw",
+        "alternatives": ["vibrato", "chordal", "bent-notes"]
+      },
+      "range": ["C4", "C6"],
+      "modulations": [
+        {"type": "vibrato", "rate": 5.5, "depth": 0.3},
+        {"type": "bend", "range": "±1 semitone"},
+        {"type": "dynamic-breath", "intensity": "variable"}
+      ],
+      "effects": [
+        {"type": "resonance", "intensity": 0.8},
+        {"type": "air-hiss", "blend": 0.1}
+      ]
+    },
+    {
+      "name": "Strings",
+      "type": "string",
+      "playstyle": {
+        "default": "bowed",
+        "alternatives": ["plucked", "strummed"]
+      },
+      "tuning": ["G3", "D4", "A4", "E5"],
+      "modulations": [
+        {"type": "tremolo", "rate": "variable"},
+        {"type": "harmonic", "activation": "soft-pressure"},
+        {"type": "glissando", "range": "±1 octave"}
+      ],
+      "effects": [
+        {"type": "reverb", "intensity": 0.6},
+        {"type": "overdrive", "intensity": 0.4}
+      ]
+    }
+  ],
+  "interactionRules": {
+    "simultaneousUsage": true,
+    "blowWhileBowing": {
+      "effect": {
+        "name": "enhanced-resonance",
+        "intensity": 0.7
+      }
+    },
+    "drawWhileStrumming": {
+      "effect": {
+        "name": "dampened-chords",
+        "intensity": 0.5
+      }
+    },
+    "blowWhilePlucking": {
+      "effect": {
+        "name": "airy-texture",
+        "intensity": 0.4
+      }
+    }
+  }
+}
