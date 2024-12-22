@@ -1,0 +1,77 @@
+{
+  "name": "Chiptar",
+  "type": "hybrid.digital.string",
+  "range": ["C2", "C7"],
+  "components": {
+    "chiptune": {
+      "type": "digital.8bit",
+      "waveforms": ["square", "triangle", "sawtooth", "noise"],
+      "modulations": {
+        "pulseWidth": {
+          "range": [0.125, 0.875],
+          "default": 0.5
+        },
+        "bitCrush": {
+          "depth": "2-8 bits",
+          "variable": true
+        },
+        "arpeggiation": {
+          "speed": "variable",
+          "patterns": ["up", "down", "random"]
+        }
+      },
+      "effects": {
+        "type": "digital_artifacts",
+        "glitch": true,
+        "aliasing": "controlled"
+      }
+    },
+    "strings": {
+      "type": "string.electric",
+      "tuning": ["E2", "A2", "D3", "G3", "B3", "E4"],
+      "playstyle": {
+        "default": "plucked",
+        "alternatives": ["tapped", "hammered", "harmonics"]
+      },
+      "modulations": {
+        "distortion": {
+          "type": "analog",
+          "intensity": "variable"
+        },
+        "feedback": {
+          "controlled": true,
+          "resonance": "variable"
+        }
+      }
+    }
+  },
+  "interactionRules": {
+    "chiptuneWithPluck": {
+      "effect": "digital_resonance",
+      "bitrate": "variable",
+      "harmonicEnhance": true
+    },
+    "arpeggioWithHarmonics": {
+      "effect": "cascading_overtones",
+      "glitchRate": "controlled"
+    },
+    "feedbackWithPulseWidth": {
+      "effect": "modulated_chaos",
+      "intensity": 0.7
+    }
+  },
+  "mpe_parameters": {
+    "bitCrushControl": {
+      "channel": 2,
+      "cc": 74
+    },
+    "stringResonance": {
+      "channel": 3,
+      "cc": 75
+    },
+    "glitchIntensity": {
+      "channel": 4,
+      "cc": 76
+    }
+  }
+}
