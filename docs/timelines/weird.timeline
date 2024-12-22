@@ -1,0 +1,28 @@
+{
+  "timeline": {
+    "layers": [
+      {
+        "id": "violin1",
+        "instrument": "violin.baroque",
+        "playstyle": "smooth_expressive",
+        "notes": [
+          {
+            "pitch": "A4",
+            "start": "1.1.0",
+            "style": "aggressive_rock"
+          },
+          {
+            "pitch": "E4",
+            "start": "1.2.0",
+            "style": "percussive"
+          },
+          {
+            "pitch": "G4",
+            "start": "1.3.0",
+            "style": "smooth_expressive"
+          }
+        ]
+      }
+    ]
+  }
+}

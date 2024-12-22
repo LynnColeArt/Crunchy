@@ -1,0 +1,8 @@
+crunchy compile \
+ --input="input.musicxml" \
+ --output="output.midi" \
+ --instrument="violin.classical" \
+ --style="aggressive-rock" \
+ --mpe \
+ --velocity-curve="sharp" \
+ --polyphonic-expression

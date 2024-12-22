@@ -1,0 +1,20 @@
+{
+  "timeline": {
+    "layers": [
+      {
+        "id": "violin1",
+        "instrument": "violin",
+        "playstyle": "aggressive-rock",
+        "notes": [
+          {
+            "pitch": "A4",
+            "start": "1.1.0",
+            "duration": "1.0.0",
+            "velocity": 120,
+            "modifiers": [{"type": "vibrato", "depth": 0.5}]
+          }
+        ]
+      }
+    ]
+  }
+}
