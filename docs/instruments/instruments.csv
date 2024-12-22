@@ -1,3 +1,4 @@
+ID,Instrument,Type,Region,Base_Tuning,Alt_Tunings,Note_Range,MPE_Pitch_Range,MPE_Pressure_Sensitivity,MPE_Timbre_Range,Data_Confidence,Needs_Expert_Review,Traditional_Techniques,Cultural_Context,Playing_Style,Sources
 1,Violin.Classical,string.bowed,"Western Classical","G3 D4 A4 E5",,"G3-A7",2,high,64,high,no,"vibrato,glissando,harmonics,col legno,sul ponticello","Classical technique","standing/seated,modern bow","Grove Music Online"
 2,Violin.Baroque,string.bowed,"Western Classical","G3 D4 A4 E5 (A=415Hz)",,"G3-A7",1,high,64,high,no,"vibrato,glissando,harmonics","Period performance","standing/seated,baroque bow","Grove Music Online"
 3,Violin.Folk,string.bowed,"Celtic,Scottish,Irish","G3 D4 A4 E5","G3 D4 A4 D5","G3-A7",2,high,64,high,no,"drone,cross-tuning,chopping","Folk style","standing,regional variations","Traditional Music Library"
