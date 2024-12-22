@@ -1,0 +1,21 @@
+{
+  "style": "smooth_expressive",
+  "mpe_parameters": {
+    "attack": {
+      "channel": 2,
+      "cc": 73,
+      "value_range": [20, 80]
+    },
+    "dynamics": {
+      "channel": 3,
+      "cc": 74,
+      "compression_ratio": 1.5,
+      "threshold": -24
+    },
+    "velocity_curve": {
+      "type": "logarithmic",
+      "sensitivity": 0.85,
+      "min_threshold": 10
+    }
+  }
+}

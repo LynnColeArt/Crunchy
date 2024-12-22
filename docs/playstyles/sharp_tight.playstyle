@@ -1,0 +1,21 @@
+{
+  "style": "sharp_tight",
+  "mpe_parameters": {
+    "attack": {
+      "channel": 2,
+      "cc": 73,
+      "value_range": [100, 127]
+    },
+    "dynamics": {
+      "channel": 3,
+      "cc": 74,
+      "compression_ratio": 6,
+      "threshold": -8
+    },
+    "velocity_curve": {
+      "type": "exponential",
+      "exponent": 2.2,
+      "min_boost": 80
+    }
+  }
+}

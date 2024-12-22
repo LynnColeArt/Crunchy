@@ -1,0 +1,21 @@
+{
+  "style": "wide_dynamic",
+  "mpe_parameters": {
+    "attack": {
+      "channel": 2,
+      "cc": 73,
+      "value_range": [40, 110]
+    },
+    "dynamics": {
+      "channel": 3,
+      "cc": 74,
+      "compression_ratio": 1.2,
+      "threshold": -30
+    },
+    "velocity_curve": {
+      "type": "linear",
+      "slope": 1.0,
+      "offset": 0
+    }
+  }
+}

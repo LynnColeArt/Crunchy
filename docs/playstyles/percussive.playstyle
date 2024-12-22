@@ -1,0 +1,22 @@
+{
+  "style": "percussive",
+  "mpe_parameters": {
+    "attack": {
+      "channel": 2,
+      "cc": 73,
+      "value_range": [110, 127]
+    },
+    "dynamics": {
+      "channel": 3,
+      "cc": 74,
+      "compression_ratio": 3,
+      "threshold": -15
+    },
+    "velocity_curve": {
+      "type": "exponential",
+      "exponent": 1.8,
+      "min_boost": 90,
+      "peak_emphasis": true
+    }
+  }
+}
