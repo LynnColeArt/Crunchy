@@ -1,246 +1,184 @@
-# Music Notation Transpiler: Design and Analysis
-## A Technical Discussion and Invitation for Dialogue
 
-## Introduction
+# Music Notation Transpiler Specification
 
-This document explores approaches to representing musical notation in a transpiler system. While we present our analysis and chosen direction, we actively encourage constructive critique and alternative viewpoints. Our goal is to create a solid foundation for music notation conversion that is both practical and forward-thinking.
+**Version 0.1.5**
 
-## The Core Challenge
+## Overview
 
-Converting between music notation formats requires us to solve several fundamental problems:
-- Preserving all musical meaning
-- Handling both traditional and experimental notation
-- Maintaining convertibility between formats
-- Supporting multi-track compositions
-- Scaling effectively
-- Remaining maintainable
+This document provides a comprehensive specification for the Crunchy Transpiler, a versatile music notation converter. Designed to preserve musical fidelity and support diverse formats, the transpiler adopts a modular approach, enabling compatibility with both traditional and experimental musical notations. This specification outlines the design principles, supported features, and detailed usage guidelines.
 
-## Representation Approaches
+## Supported Formats
 
-### 1. Event-Based Network
+The transpiler supports a variety of musical notation formats, ensuring flexibility and interoperability:
 
-An event-based approach treats musical elements as discrete events in time, connected by relationships.
+### MusicXML
 
-```
-Event{
-    timing: TimePoint
-    type: EventType
-    properties: Map<String, Value>
-    relationships: List<Relationship>
+- **Description**: A detailed standard for Western musical notation.
+- **Strengths**: Articulations, dynamics, and notation details.
+- **Limitations**: Verbosity and parsing complexity.
+
+### MuseScore JSON
+
+- **Description**: A lightweight, human-readable format from MuseScore.
+- **Strengths**: Compact and extensible.
+- **Limitations**: Limited adoption compared to MusicXML.
+
+### MIDI
+
+- **Description**: A performance-focused standard capturing note data.
+- **Strengths**: Universal compatibility with DAWs.
+- **Limitations**: Lacks detailed notation information.
+
+---
+
+## Modular Design Principles
+
+### Separation of Concerns
+
+The transpiler leverages a modular architecture, separating instrument definitions, behaviors, and core processing logic into distinct layers. This design ensures clarity, flexibility, and ease of maintenance.
+
+#### Instrument Definitions (.instrument Files)
+
+- Define core properties of instruments, such as tuning, range, and MPE parameters.
+- **Example**:
+  ```json
+  {
+    "name": "Violin",
+    "type": "string",
+    "tuning": ["G3", "D4", "A4", "E5"],
+    "range": {"lowest": "G3", "highest": "A7"}
+  }
+  ```
+
+#### Behavioral Logic (.logic Files)
+
+- Specify complex transformations and performance behaviors declaratively.
+- **Example**:
+  ```json
+  {
+    "behaviors": {
+      "Arpeggio": {
+        "repeat": {
+          "frequency": "16n",
+          "pattern": {
+            "mpe_parameters": {
+              "pitch_bend": {
+                "channel": 1,
+                "values": [0, 2, 4, 2]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  ```
+
+---
+
+## Core Features
+
+### Multi-Track and Layered Support
+
+- **Description**: Synchronize and manage multiple tracks, each with independent properties.
+- **Example**:
+  ```json
+  {
+    "timeline": {
+      "layers": [
+        {
+          "id": "violin",
+          "instrument": "violin",
+          "playstyle": "legato",
+          "notes": [
+            {"pitch": "A4", "start": "1.1.0", "duration": "1.0.0"}
+          ]
+        }
+      ]
+    }
+  }
+  ```
+
+### Playstyles
+
+Playstyles modify playback interpretation globally, per layer, or per note.
+
+#### Precedence
+
+1. **Note-Level**: Overrides all other settings.
+2. **Layer-Level**: Applies to all notes unless overridden.
+3. **Global**: Default setting for all layers and notes.
+
+#### Example: Playstyle Hierarchy
+
+```json
+{
+  "timeline": {
+    "globalPlaystyle": "orchestral",
+    "layers": [
+      {
+        "id": "piano",
+        "playstyle": "staccato",
+        "notes": [
+          {"pitch": "C4", "playstyle": "legato"}
+        ]
+      }
+    ]
+  }
 }
 ```
 
-#### Advantages:
-- Natural representation of temporal relationships
-- Flexible property system
-- Clear handling of simultaneous events
-- Good fit for streaming processing
+### Advanced Use Case: Command-Line Integration
 
-#### Challenges:
-- Complex relationship management
-- Memory overhead for relationship tracking
-- Potential performance issues with large scores
-- Complexity in maintaining format-specific details
+- **Scenario**: Assign instruments, tunings, and playstyles to layers.
+- **Command**:
+  ```bash
+  crunchy --input score.musicxml --output score.mid           --global-playstyle="orchestral"           --layers "layer1:instrument=violin,tuning=G3-D4-A4-E5,playstyle=expressive"           --layers "layer2:instrument=piano,playstyle=staccato"           --layers "layer3:instrument=flute,tuning=C4-E4-G4-A4,playstyle=legato"
+  ```
 
-### 2. Layered Representation
+### Error Handling
 
-Separates musical information into distinct layers: raw events, relationships, and notation-specific details.
+#### Principles
 
-```
-BaseLayer{
-    events: List<MusicalEvent>
-}
+- **Clarity**: Messages framed in musician-friendly terms.
+- **Actionability**: Provide clear resolution steps.
 
-RelationshipLayer{
-    connections: Map<EventId, List<Relationship>>
-}
+#### Example Errors
 
-NotationLayer{
-    formatSpecific: Map<EventId, FormatDetails>
-}
-```
+- **Structural Error**:
+  ```
+  "Measure structure issue in Bar 23:
+  - Missing time signature after tempo change.
+  Suggestion: Add a time signature at the start of measure 23."
+  ```
+- **Track Relationship Error**:
+  ```
+  "Track synchronization issue:
+  - Violin ends at measure 45; Piano ends at measure 43.
+  Suggestion: Align all tracks to the same length."
+  ```
 
-#### Advantages:
-- Clean separation of concerns
-- Easier format-specific handling
-- Clear upgrade path
-- Simpler validation per layer
+---
 
-#### Challenges:
-- Synchronization between layers
-- Complexity in cross-layer relationships
-- Potential redundancy
+## Testing and Validation
 
-### 3. Graph-Based Structure
+### Strategy
 
-Represents music as a directed graph of musical elements with typed relationships.
+1. **Unit Tests**: Validate core functionality of each module.
+2. **Integration Tests**: Ensure compatibility across modules.
+3. **Edge Cases**: Address scenarios like microtonal systems and hybrid instruments.
 
-```
-Node{
-    type: ElementType
-    properties: Map<String, Value>
-}
+---
 
-Edge{
-    type: RelationType
-    properties: Map<String, Value>
-}
-```
+## Version History
 
-#### Advantages:
-- Natural representation of musical relationships
-- Strong querying capabilities
-- Flexible structure for complex notation
+- **0.1.5**:
+  - Introduced advanced use cases for command-line workflows.
+  - Aligned structure and examples with the modular model specification.
+  - Enhanced multi-track support with playstyle hierarchy.
 
-#### Challenges:
-- More complex implementation
-- Potentially higher memory usage
-- Need for careful edge type design
+---
 
-## Our Chosen Approach: Hybrid Event-Graph Structure
+## Acknowledgments
 
-After analyzing these approaches, we're implementing a hybrid structure that combines event-based timing with graph-like relationships.
-
-### Core Structure
-```cpp
-struct MusicalEvent {
-    TimePoint timing;
-    EventType type;
-    Properties props;
-    vector<Relationship> relations;
-};
-```
-
-### System Architecture
-
-```mermaid
-graph TD
-    subgraph Input
-        MusicXML[MusicXML]
-        MuseScore[MuseScore JSON]
-        MIDI[MIDI]
-    end
-
-    subgraph "Core Transpiler"
-        Parser[Format Parsers]
-        
-        subgraph "Internal Representation"
-            TrackManager[Track Manager]
-            Internal[Core Representation]
-            Relations[Track Relations]
-            
-            TrackManager --> Internal
-            TrackManager --> Relations
-            Internal <--> Relations
-        end
-        
-        Converter[Format Converters]
-        
-        Parser --> TrackManager
-        Internal --> Converter
-        Relations --> Converter
-    end
-
-    subgraph Output
-        OutXML[MusicXML]
-        OutScore[MuseScore JSON]
-        OutMIDI[MIDI]
-    end
-
-    MusicXML --> Parser
-    MuseScore --> Parser
-    MIDI --> Parser
-    
-    Converter --> OutXML
-    Converter --> OutScore
-    Converter --> OutMIDI
-
-    style Internal fill:#f9f,stroke:#333,stroke-width:2px
-```
-
-## Multi-Track Support
-
-```mermaid
-graph TD
-    subgraph "Score"
-        Meta[Metadata]
-        Tracks[Tracks Collection]
-    end
-
-    subgraph "Track 1"
-        T1[Track Metadata]
-        T1E1[Event 1.1]
-        T1E2[Event 1.2]
-        T1E3[Event 1.3]
-
-        T1 --> T1E1
-        T1E1 --> T1E2
-        T1E2 --> T1E3
-    end
-
-    subgraph "Track 2"
-        T2[Track Metadata]
-        T2E1[Event 2.1]
-        T2E2[Event 2.2]
-        T2E3[Event 2.3]
-
-        T2 --> T2E1
-        T2E1 --> T2E2
-        T2E2 --> T2E3
-    end
-
-    Tracks --> T1
-    Tracks --> T2
-
-    classDef event fill:#f9f,stroke:#333,stroke-width:2px
-    class T1E1,T1E2,T1E3,T2E1,T2E2,T2E3 event
-```
-
-## Error Handling
-Our error handling prioritizes clear communication in musical terms. Rather than exposing technical details, errors are expressed in language that makes sense to musicians. For example:
-
-"Track synchronization issue:
-- Piano part ends at measure 45
-- Violin part ends at measure 43
-- All parts must have the same length"
-
-See Error Handling Specification for complete details.
-
-## Implementation Approach
-
-### Key Design Decisions
-1. Event-based foundation with graph-like relationships
-2. Comprehensive track support
-3. Clean error handling
-4. Clear interfaces for format handling
-
-### Testing Strategy
-1. Unit tests for each component
-2. Integration tests for format conversion
-3. Validation with real-world scores
-4. Edge case testing
-
-## Areas Where We Welcome Feedback
-
-1. **Musical Representation**
-- How should we handle experimental notation?
-- What edge cases need special consideration?
-- Are there musical concepts that don't fit this model?
-
-2. **Technical Approach**
-- Are there more efficient ways to represent relationships?
-- How could the property system be improved?
-- What performance optimizations should we consider?
-
-## Next Steps
-
-1. Implementation of core structure
-2. Basic format parser development
-3. Test suite creation
-4. Format converter implementation
-
-## Invitation for Critique
-
-We actively encourage constructive criticism of this approach. If you see limitations, have alternative suggestions, or spot potential issues, please share them. This project aims to serve the broader music community, and your insights are valuable in shaping its development.
-
-[Project details and contribution guidelines to be added]
+This document reflects collaborative input from Gene The Machine, Rich Fantasia, and Rachel M. Their expertise continues to shape the evolution of the Crunchy Transpiler.
