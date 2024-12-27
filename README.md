@@ -46,20 +46,6 @@ crunchy --input ./scores --output ./midi --recursive
 ### Prerequisites
 [tbd]
 
-### Build Steps
-```bash
-mkdir build
-cd build
-cmake ..
-make
-```
-
-### Running Tests
-```bash
-cd build
-ctest
-```
-
 ## Usage Examples
 
 ### Basic Conversion
