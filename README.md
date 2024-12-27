@@ -44,10 +44,7 @@ crunchy --input ./scores --output ./midi --recursive
 ## Building from Source
 
 ### Prerequisites
-- C++17 compatible compiler
-- CMake 3.15 or higher
-- RtMidi library
-- nlohmann/json for C++
+[tbd]
 
 ### Build Steps
 ```bash
