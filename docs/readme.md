@@ -13,7 +13,6 @@ System is proposals for how things do/should work within the design we're propos
 Current proposals of note:
 * [Basic Transpiler Spec](system/transpiler-spec.md)
 * [Modular Data Modelling Spec](system/modular-model.md)
-* [Proposed DNA (Digital Notation Archive) Spec](system/dna-specification.md)
 * [Error Handling Approach](system/error-handling-approach.md)
 
 
