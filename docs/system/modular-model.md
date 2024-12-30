@@ -1,5 +1,5 @@
 
-# Modular and Extensible Specification for Contextual Representation in Musical Notation Modeling
+# Data Modelling Specification
 
 **Version 0.3.4**
 
